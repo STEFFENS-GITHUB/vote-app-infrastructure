@@ -1,3 +1,13 @@
 module "terraform-vpc" {
   source = "./modules/vpc-module"
+  vpc_cidr_block = var.vpc_cidr_block
+  public_subnets = var.public_subnets
+  private_subnets = var.private_subnets
+}
+
+module "terraform-ecs" {
+  source = "./modules/ecs-module"
+  vpc_id = module.terraform-vpc.vpc_id
+  public_subnet_ids = module.terraform-vpc.public_subnet_ids
+  private_subnet_ids = module.terraform-vpc.private_subnet_ids
 }

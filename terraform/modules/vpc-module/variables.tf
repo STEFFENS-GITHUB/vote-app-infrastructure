@@ -32,48 +32,22 @@ variable "igw_name_tag" {
     default = ""
 }
 
-# PUBLIC SUBNET VARIABLES
+# SUBNET VARIABLES
 
-variable "public_subnet_cidr" {
-    description = "CIDR block for the public VPC"
-    type = string
-    default = "192.168.1.0/24"
+variable "public_subnets" {
+    description = "Object for defining public subnets"
+    type = list(object({
+        cidr_block = string
+        availability_zone = string
+        dns_name = bool
+    }))
 }
 
-variable "public_subnet_az" {
-    description = "Availability zone for public subnet"
-    type = string
-    default = "us-east-1a"
-}
-
-variable "public_subnet_map_ip" {
-    description = "Variable for mapping public IPs to instances"
-    type = bool
-    default = true
-}
-
-variable "public_subnet_dns_name" {
-    description = "Variable for mapping dns names to a records"
-    type = bool
-    default = true
-}
-
-# PRIVATE SUBNET VARIABLES
-
-variable "private_subnet_cidr" {
-    description = "CIDR block for the private VPC"
-    type = string
-    default = "192.168.100.0/24"
-}
-
-variable "private_subnet_az" {
-    description = "Availability zone for private subnet"
-    type = string
-    default = "us-east-1c"
-}
-
-variable "private_subnet_dns_name" {
-    description = "Variable for mapping dns names to a records"
-    type = bool
-    default = true
+variable "private_subnets" {
+    description = "Object for defining private subnets"
+    type = list(object({
+        cidr_block = string
+        availability_zone = string
+        dns_name = bool
+    }))
 }

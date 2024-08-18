@@ -17,28 +17,38 @@ resource "aws_internet_gateway" "terraform-igw" {
   ]
 }
 
-resource "aws_subnet" "public_subnet" {
+resource "aws_subnet" "public_subnets" {
+  for_each = { for i, subnet in var.public_subnets : i => subnet }
+  
+  cidr_block = each.value.cidr_block
+  availability_zone = each.value.availability_zone
+  enable_resource_name_dns_a_record_on_launch = each.value.dns_name
+
+  map_public_ip_on_launch = true
   vpc_id = aws_vpc.terraform-vpc.id
-  cidr_block = var.public_subnet_cidr
-  tags = {
+
+  tags = { 
     Tier = "public"
   }
-  availability_zone = var.public_subnet_az
-  map_public_ip_on_launch = var.public_subnet_map_ip
-  enable_resource_name_dns_a_record_on_launch = var.public_subnet_dns_name
+
   depends_on = [
     aws_vpc.terraform-vpc
   ]
 }
 
-resource "aws_subnet" "private_subnet" {
+resource "aws_subnet" "private_subnets" {
+  for_each = { for i, subnet in var.private_subnets : i => subnet }
+  
+  cidr_block = each.value.cidr_block
+  availability_zone = each.value.availability_zone
+  enable_resource_name_dns_a_record_on_launch = each.value.dns_name
+
   vpc_id = aws_vpc.terraform-vpc.id
-  cidr_block = var.private_subnet_cidr
-  tags = {
+
+  tags = { 
     Tier = "private"
   }
-  availability_zone = var.private_subnet_az
-  enable_resource_name_dns_a_record_on_launch = var.private_subnet_dns_name
+
   depends_on = [
     aws_vpc.terraform-vpc
   ]
