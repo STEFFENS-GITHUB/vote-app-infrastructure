@@ -12,3 +12,8 @@ variable "private_subnet_ids" {
     description = "List of private subnet IDs"
     type = list(string)
 }
+
+variable "cloudwatch_logs_policy" {
+    description = "JSON document for cloudwatch logs policy"
+    type = string
+}

@@ -53,3 +53,51 @@ resource "aws_subnet" "private_subnets" {
     aws_vpc.terraform-vpc
   ]
 }
+
+resource "aws_eip" "ng_eip" {
+  domain = "vpc"
+}
+
+resource "aws_nat_gateway" "nat-gateway" {
+  allocation_id = aws_eip.ng_eip.id
+  subnet_id     = element(values(aws_subnet.public_subnets)[*].id, 0)
+}
+
+resource "aws_route_table" "public_route_table" {
+  vpc_id = aws_vpc.terraform-vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.terraform-igw.id
+  }
+  tags = {
+    Name = "public-route-table"
+  }
+}
+
+resource "aws_route_table_association" "public_subnet_association" {
+  for_each = aws_subnet.public_subnets
+
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.public_route_table.id
+}
+
+resource "aws_route_table" "private_route_table" {
+  vpc_id = aws_vpc.terraform-vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.nat-gateway.id
+  }
+
+  tags = {
+    Name = "private-route-table"
+  }
+}
+
+resource "aws_route_table_association" "private_subnet_association" {
+  for_each = aws_subnet.private_subnets
+
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.private_route_table.id
+}
