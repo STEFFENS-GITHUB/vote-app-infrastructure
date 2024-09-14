@@ -21,5 +21,5 @@ fi
 if [ "$1" == "apply" ]; then
     terraform apply -var-file=$VARS_FILE
 elif [ "$1" == "destroy" ]; then
-    terraform destroy -var-file=$VARS_FILE
+    terraform destroy -var-file=$VARS_FILE -refresh=false
 fi
